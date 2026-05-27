@@ -1,7 +1,7 @@
 // ============================================================================
 // Pricing Engine — TypeScript starter (Phase 1)
 //
-// Read INSTRUCTIONS.md first. Solve phase 1 below; the interviewer will
+// Read instructions first. Solve phase 1 below; the interviewer will
 // introduce phase 2 and 3 verbally once phase 1 is working.
 //
 // Run:  npx ts-node starter.ts
@@ -55,6 +55,7 @@ function main() {
     { sku: 'A8-412X',  customer: 'C-1003' },  // Walk-in (BRONZE)
     { sku: 'PLY-12F',  customer: 'C-1001' },  // Bayside on plywood
     { sku: '88A-99',   customer: 'C-1002' },  // Maple Ridge on OSB
+    //{ sku: 'NLF-21',   customer: 'C-1001' },  // Bayside (GOLD) nails typo
   ];
 
   for (const c of cases) {

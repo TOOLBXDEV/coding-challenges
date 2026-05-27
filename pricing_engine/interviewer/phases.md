@@ -1,27 +1,32 @@
 # Phase Reveal Scripts + Paste-In Data
 
-When the candidate has phase 1 working, reveal the next phase verbally and paste the corresponding data into their editor. **Don't reveal phases ahead of time.**
+Solution:
+A8-412X  GOLD    Bayside Construction         -> $2.97
+A8-412X  SILVER  Maple Ridge Builders         -> $3.21
+A8-412X  BRONZE  Walk-in Customer             -> $3.49
+PLY-12F  GOLD    Bayside Construction         -> $24.30
+88A-99  SILVER  Maple Ridge Builders         -> $17.38
 
+Now uncomment last case in main with unknown SKU, ask candidate to fix. Great if their solution already handles this, might need a signature change.
 ---
 
 ## Phase 2 — Time-bounded contract pricing
 
-### What to say (verbatim if helpful)
-
-> "Nice. Now let's add a wrinkle. We have **contracts** — a customer-specific, SKU-specific fixed price that's negotiated separately and overrides the tier discount. Contracts have an effective date and an expiry date — they apply for some window of time.
+> New requirement. We have **contracts** — a customer-specific, SKU-specific fixed price that's negotiated separately and overrides the tier discount. Contracts have an effective date and an expiry date — they apply for some window of time.
 >
-> For example: Bayside Construction negotiated a fixed price of \$3.20 on the 2x4x8 from January through June. During that window, they pay \$3.20 — not the tier discount.
+> For example: Bayside Construction negotiated a fixed price of \$2.20 on the 2x4x8 from January through June. During that window, they pay \$2.20 — not the tier discount.
 >
 > A few realistic wrinkles I want you to think through:
 > - The same customer might have multiple contracts on the same SKU with overlapping date windows.
 > - Some contracts are in the past, some are in the future.
 > - Your function now needs to take an `asOf` date — what price applies on this date?
->
-> Here's some sample data to add."
+> - Existing test cases need to continue working.
 
-### Paste-in data
+### Paste above YOUR CODE BELOW
 
 ```ts
+// ----- Phase 2 data ---------------------------------------------------------
+
 interface Contract {
   customer_id: string;
   sku: string;
@@ -32,11 +37,11 @@ interface Contract {
 
 const CONTRACTS: Contract[] = [
   // Bayside has a Q1-Q2 contract on 2x4x8 at $3.20
-  { customer_id: 'C-1001', sku: 'A8-412X', fixed_price: 3.20,
+  { customer_id: 'C-1001', sku: 'A8-412X', fixed_price: 2.20,
     effective_date: new Date('2026-01-01'), expiry_date: new Date('2026-06-30') },
 
   // Bayside negotiated a better deal mid-year — overlaps the first contract Apr-Jun
-  { customer_id: 'C-1001', sku: 'A8-412X', fixed_price: 3.05,
+  { customer_id: 'C-1001', sku: 'A8-412X', fixed_price: 2.35,
     effective_date: new Date('2026-04-01'), expiry_date: new Date('2026-09-30') },
 
   // Maple Ridge has a year-long contract on plywood
@@ -48,31 +53,64 @@ const CONTRACTS: Contract[] = [
     effective_date: new Date('2025-06-01'), expiry_date: new Date('2025-12-31') },
 
   // Bayside's OSB contract — starts in the future
-  { customer_id: 'C-1001', sku: '88A-99', fixed_price: 17.50,
-    effective_date: new Date('2026-07-01'), expiry_date: new Date('2027-06-30') },
+  { customer_id: 'C-1001', sku: '88A-99', fixed_price: 15.50,
+    effective_date: new Date('2026-12-01'), expiry_date: new Date('2027-06-30') },
 ];
-
-const TEST_DATES = {
-  q1: new Date('2026-02-15'),  // Bayside's first contract is active; second isn't yet
-  q2: new Date('2026-05-15'),  // Both Bayside contracts overlap
-  q3: new Date('2026-08-15'),  // Only the second Bayside contract is active
-  preContract: new Date('2025-03-15'), // Before any contract — fall back to tier
-};
 ```
+
+## PASTE INTO MAIN AT end
+
+```ts
+    
+  const TEST_DATES = {
+    q1: new Date('2026-02-15'),  // Bayside's first contract is active; second isn't yet
+    q2: new Date('2026-05-15'),  // Both Bayside contracts overlap
+    q3: new Date('2026-08-15'),  // Only the second Bayside contract is active
+    preContract: new Date('2025-03-15'), // Before any contract — fall back to tier
+  };  
+  
+  const phase2Cases: Array<{ sku: string; customer: string; asOf: Date }> = [
+    { sku: 'A8-412X',  customer: 'C-1001', asOf: TEST_DATES.q1},  // Bayside (GOLD) buying 2x4x8 in Q1
+    { sku: 'A8-412X',  customer: 'C-1001', asOf: TEST_DATES.q2},  // Bayside (GOLD) buying 2x4x8 in Q2
+    { sku: 'A8-412X',  customer: 'C-1001', asOf: TEST_DATES.q3},  // Bayside (GOLD) buying 2x4x8 in Q3
+    { sku: 'A8-412X',  customer: 'C-1001', asOf: TEST_DATES.preContract},  // Bayside (GOLD) buying 2x4x8 in Q1 2025
+  ];
+  
+  for (const c of phase2Cases) {
+    const customer = CUSTOMERS.find((x) => x.id === c.customer)!;
+    const price = getPrice(c.sku, customer, c.asOf);
+    const dateString = c.asOf.toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' })
+    console.log(`${dateString} ${c.sku}  ${customer.tier.padEnd(7)} ${customer.name.padEnd(28)} -> $${price.toFixed(2)}`);
+  }
+```
+
+Solution:
+A8-412X  GOLD    Bayside Construction         -> $1.20
+A8-412X  SILVER  Maple Ridge Builders         -> $3.21
+A8-412X  BRONZE  Walk-in Customer             -> $3.49
+PLY-12F  GOLD    Bayside Construction         -> $24.30
+88A-99  SILVER  Maple Ridge Builders         -> $17.38
+NLF-21: SKU not found
+02/15/26 A8-412X  GOLD    Bayside Construction         -> $1.20
+05/15/26 A8-412X  GOLD    Bayside Construction         -> $1.20
+08/15/26 A8-412X  GOLD    Bayside Construction         -> $2.35
+03/15/25 A8-412X  GOLD    Bayside Construction         -> $2.97
+08/15/26 88A-99  GOLD    Bayside Construction         -> $16.06
 
 ### What to push on
 
 - *"Two contracts overlap in Q2. Which one wins, and why?"* — there's no canonical answer. Watch them surface it and pick.
 - *"What if `asOf` is before any contract?"* — should fall back to tier pricing.
-- *"Could we use `new Date()` instead of passing `asOf`?"* — no, breaks reproducibility (backdated invoices, audit). See if they catch it.
 
 ---
 
-## Phase 3 — Volume breaks + promos + auditability
+## Phase 3 — Auditability
 
-You probably won't get all of phase 3 implemented. Pick **one or two** of (volume / promos / breakdown) based on time remaining.
+A customer disputed a price six months ago and now finance is asking us to reproduce exactly what they were quoted. Currently your function returns a number. We need it to return a **breakdown** — every adjustment we applied, what it was, where it came from. Reshape your return type.
 
-### What to say
+No specific solution, candidate should rework their solution to return or record the amount and source of the discount applied.
+
+## More optional phases
 
 #### If introducing volume breaks:
 

@@ -1,25 +1,24 @@
 # Phase Reveal Scripts + Paste-In Data
 
 Solution:
+```
 A8-412X  GOLD    Bayside Construction         -> $2.97
 A8-412X  SILVER  Maple Ridge Builders         -> $3.21
 A8-412X  BRONZE  Walk-in Customer             -> $3.49
 PLY-12F  GOLD    Bayside Construction         -> $24.30
 88A-99  SILVER  Maple Ridge Builders         -> $17.38
+```
 
 Now uncomment last case in main with unknown SKU, ask candidate to fix. Great if their solution already handles this, might need a signature change.
 ---
 
 ## Phase 2 — Time-bounded contract pricing
 
-> New requirement. We have **contracts** — a customer-specific, SKU-specific fixed price that's negotiated separately and overrides the tier discount. Contracts have an effective date and an expiry date — they apply for some window of time.
+New requirement. We have **contracts** — a customer-specific, SKU-specific fixed price that's negotiated separately. Contracts have an effective date and an expiry date — they apply for some window of time.
 >
 > For example: Bayside Construction negotiated a fixed price of \$2.20 on the 2x4x8 from January through June. During that window, they pay \$2.20 — not the tier discount.
 >
-> A few realistic wrinkles I want you to think through:
 > - The same customer might have multiple contracts on the same SKU with overlapping date windows.
-> - Some contracts are in the past, some are in the future.
-> - Your function now needs to take an `asOf` date — what price applies on this date?
 > - Existing test cases need to continue working.
 
 ### Paste above YOUR CODE BELOW
@@ -37,23 +36,23 @@ interface Contract {
 
 const CONTRACTS: Contract[] = [
   // Bayside has a Q1-Q2 contract on 2x4x8 at $3.20
-  { customer_id: 'C-1001', sku: 'A8-412X', fixed_price: 2.20,
+  { id: 1, customer_id: 'C-1001', sku: 'A8-412X', fixed_price: 2.35,
     effective_date: new Date('2026-01-01'), expiry_date: new Date('2026-06-30') },
 
-  // Bayside negotiated a better deal mid-year — overlaps the first contract Apr-Jun
-  { customer_id: 'C-1001', sku: 'A8-412X', fixed_price: 2.35,
+  // Bayside contract overlaps the first contract Apr-Jun
+  { id: 2, customer_id: 'C-1001', sku: 'A8-412X', fixed_price: 2.20,
     effective_date: new Date('2026-04-01'), expiry_date: new Date('2026-09-30') },
 
   // Maple Ridge has a year-long contract on plywood
-  { customer_id: 'C-1002', sku: 'PLY-12F', fixed_price: 26.00,
+  { id: 3, customer_id: 'C-1002', sku: 'PLY-12F', fixed_price: 26.00,
     effective_date: new Date('2026-01-01'), expiry_date: new Date('2026-12-31') },
 
   // Bayside's drywall contract — already expired
-  { customer_id: 'C-1001', sku: 'DRY-12-8', fixed_price: 11.00,
+  { id: 4, customer_id: 'C-1001', sku: 'DRY-12-8', fixed_price: 11.00,
     effective_date: new Date('2025-06-01'), expiry_date: new Date('2025-12-31') },
 
   // Bayside's OSB contract — starts in the future
-  { customer_id: 'C-1001', sku: '88A-99', fixed_price: 15.50,
+  { id: 5, customer_id: 'C-1001', sku: '88A-99', fixed_price: 15.50,
     effective_date: new Date('2026-12-01'), expiry_date: new Date('2027-06-30') },
 ];
 ```
@@ -85,22 +84,19 @@ const CONTRACTS: Contract[] = [
 ```
 
 Solution:
-A8-412X  GOLD    Bayside Construction         -> $1.20
+```
+A8-412X  GOLD    Bayside Construction         -> $2.97
 A8-412X  SILVER  Maple Ridge Builders         -> $3.21
 A8-412X  BRONZE  Walk-in Customer             -> $3.49
 PLY-12F  GOLD    Bayside Construction         -> $24.30
 88A-99  SILVER  Maple Ridge Builders         -> $17.38
 NLF-21: SKU not found
-02/15/26 A8-412X  GOLD    Bayside Construction         -> $1.20
-05/15/26 A8-412X  GOLD    Bayside Construction         -> $1.20
-08/15/26 A8-412X  GOLD    Bayside Construction         -> $2.35
+02/15/26 A8-412X  GOLD    Bayside Construction         -> $2.35
+05/15/26 A8-412X  GOLD    Bayside Construction         -> $2.20
+08/15/26 A8-412X  GOLD    Bayside Construction         -> $2.20
 03/15/25 A8-412X  GOLD    Bayside Construction         -> $2.97
 08/15/26 88A-99  GOLD    Bayside Construction         -> $16.06
-
-### What to push on
-
-- *"Two contracts overlap in Q2. Which one wins, and why?"* — there's no canonical answer. Watch them surface it and pick.
-- *"What if `asOf` is before any contract?"* — should fall back to tier pricing.
+```
 
 ---
 
@@ -112,21 +108,13 @@ No specific solution, candidate should rework their solution to return or record
 
 ## More optional phases
 
-#### If introducing volume breaks:
+### Volume breaks
 
 > "Now: most contracts and SKUs have **volume breaks**. Buy 1-99 units, pay one price; 100-499, less; 500+, less still. The function needs a `qty` argument now.
 >
 > Volume breaks can apply on top of either list/tier pricing OR on top of a contract — the contract spec sometimes includes its own break schedule."
 
-#### If introducing promos:
-
-> "We also have **promotions** — temporary, SKU-level percentage discounts. Each promo has effective and expiry dates. Some promos stack with the tier discount; others don't (they're either-or). Some promos are excluded if the customer has an active contract on that SKU."
-
-#### If introducing auditability (always introduce this if time permits):
-
-> "Final wrinkle. A customer disputed a price six months ago and now finance is asking us to reproduce exactly what they were quoted. Currently your function returns a number. We need it to return a **breakdown** — every adjustment we applied, what it was, where it came from. Reshape your return type."
-
-### Paste-in data
+#### Paste-in data
 
 ```ts
 interface VolumeBreak {
@@ -148,6 +136,13 @@ const VOLUME_BREAKS: Record<string, VolumeBreak[]> = {
   ],
 };
 
+### Promos
+
+> "We also have **promotions** — temporary, SKU-level percentage discounts. Each promo has effective and expiry dates. Some promos stack with the tier discount; others don't. Some promos are excluded if the customer has an active contract on that SKU."
+
+#### Paste-in data
+
+```ts
 interface Promo {
   sku: string;
   percent_off: number;
@@ -168,25 +163,6 @@ const PROMOS: Promo[] = [
     effective_date: new Date('2026-04-01'), expiry_date: new Date('2026-04-30'),
     stacks_with_tier: false, excluded_if_under_contract: false },
 ];
-```
-
-### Expected return type when auditability is introduced
-
-```ts
-interface PriceLine {
-  source: 'list' | 'tier' | 'contract' | 'volume' | 'promo';
-  description: string;
-  adjustment: number;  // signed; e.g., negative for discount
-}
-
-interface PriceQuote {
-  sku: string;
-  customer_id: string;
-  qty: number;
-  as_of: Date;
-  unit_price: number;
-  breakdown: PriceLine[];
-}
 ```
 
 ### What to push on

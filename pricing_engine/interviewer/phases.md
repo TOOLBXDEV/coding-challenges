@@ -14,9 +14,9 @@ Now uncomment last case in main with unknown SKU, ask candidate to fix. Great if
 
 ## Phase 2 — Time-bounded contract pricing
 
-New requirement. We have **contracts** — a customer-specific, SKU-specific fixed price that's negotiated separately. Contracts have an effective date and an expiry date — they apply for some window of time.
+> New requirement. We have **contracts** — a customer-specific, SKU-specific fixed price that's negotiated separately. Contracts have an effective date and an expiry date — they apply for some window of time.
 >
-> For example: Bayside Construction negotiated a fixed price of \$2.20 on the 2x4x8 from January through June. During that window, they pay \$2.20 — not the tier discount.
+> For example: Bayside Construction negotiated a fixed price of \$2.20 on the 2x4x8 from January through June. During that window, they pay $2.20 — not the tier discount.
 >
 > - The same customer might have multiple contracts on the same SKU with overlapping date windows.
 > - Existing test cases need to continue working.
@@ -104,7 +104,7 @@ NLF-21: SKU not found
 
 ## Phase 3 — Auditability
 
-A customer disputed a price six months ago and now finance is asking us to reproduce exactly what they were quoted. Currently your function returns a number. We need it to return a **breakdown** — every adjustment we applied, what it was, where it came from. Reshape your return type.
+> A customer disputed a price six months ago and now finance is asking us to reproduce exactly what they were quoted. How would you ensure that you can respond to this request?
 
 No specific solution, candidate should rework their solution to return or record the amount and source of the discount applied.
 
@@ -137,6 +137,7 @@ const VOLUME_BREAKS: Record<string, VolumeBreak[]> = {
     { min_qty: 200,  unit_price: 24.99 },
   ],
 };
+```
 
 ### Promos
 

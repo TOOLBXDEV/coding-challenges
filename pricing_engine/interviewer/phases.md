@@ -27,6 +27,7 @@ New requirement. We have **contracts** — a customer-specific, SKU-specific fix
 // ----- Phase 2 data ---------------------------------------------------------
 
 interface Contract {
+  id: number;
   customer_id: string;
   sku: string;
   fixed_price: number;
@@ -73,6 +74,7 @@ const CONTRACTS: Contract[] = [
     { sku: 'A8-412X',  customer: 'C-1001', asOf: TEST_DATES.q2},  // Bayside (GOLD) buying 2x4x8 in Q2
     { sku: 'A8-412X',  customer: 'C-1001', asOf: TEST_DATES.q3},  // Bayside (GOLD) buying 2x4x8 in Q3
     { sku: 'A8-412X',  customer: 'C-1001', asOf: TEST_DATES.preContract},  // Bayside (GOLD) buying 2x4x8 in Q1 2025
+    { sku: '88A-99',   customer: 'C-1001', asOf: TEST_DATES.preContract},  // Bayside (GOLD) buying OSB in Q1 2025
   ];
   
   for (const c of phase2Cases) {

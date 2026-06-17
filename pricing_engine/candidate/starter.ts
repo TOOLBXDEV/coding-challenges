@@ -21,6 +21,7 @@ const LIST_PRICES: Record<string, number> = {
   'INS-13-K': 19.89,  // R-13 Fiberglass Batts (bag)
 };
 
+// Gold: 15% off, Silver: 8% off, Bronze: no discount
 type Tier = 'GOLD' | 'SILVER' | 'BRONZE';
 
 interface Customer {

@@ -62,7 +62,7 @@ function main() {
   for (const c of cases) {
     const customer = CUSTOMERS.find((x) => x.id === c.customer)!;
     const price = getPrice(c.sku, customer);
-    console.log(`${c.sku}  ${customer.tier.padEnd(7)} ${customer.name.padEnd(28)} -> $${price.toFixed(2)}`);
+    console.log(`${c.sku}  ${customer.tier.padEnd(7)} ${customer.name.padEnd(28)}  ${price.toFixed(2)}`);
   }
 }
 

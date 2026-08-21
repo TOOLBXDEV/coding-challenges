@@ -1,3 +1,6 @@
+Typescript instructions. See [interviewer directory in Github repo](https://github.com/TOOLBXDEV/coding-challenges/tree/main/pricing_engine/interviewer) for these and instructions for other languages.
+
+
 # Phase Reveal Scripts + Paste-In Data
 
 Solution:
@@ -77,13 +80,14 @@ const CONTRACTS: Contract[] = [
     { sku: '88A-99',   customer: 'C-1001', asOf: TEST_DATES.preContract},  // Bayside (GOLD) buying OSB in Q1 2025
   ];
   
-  for (const c of phase2Cases) {
-    const customer = CUSTOMERS.find((x) => x.id === c.customer)!;
-    const price = getPrice(c.sku, customer, c.asOf);
-    const dateString = c.asOf.toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' })
-    console.log(`${dateString} ${c.sku}  ${customer.tier.padEnd(7)} ${customer.name.padEnd(28)} -> $${price.toFixed(2)}`);
-  }
+for (const c of phase2Cases) {
+      const customer = CUSTOMERS.find((x) => x.id === c.customer)!;
+      const price = getPrice(c.sku, customer, c.asOf);
+      const dateString = c.asOf.toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' })
+    }
 ```
+Copy the console.log line from the first runner, adding `${dateString}` to the beginning of the string
+(this line causes a rendering error in the Solution pane for some reason!)
 
 Solution:
 ```
@@ -99,6 +103,8 @@ NLF-21: SKU not found
 03/15/25 A8-412X  GOLD    Bayside Construction         -> $2.97
 08/15/26 88A-99  GOLD    Bayside Construction         -> $16.06
 ```
+
+### NOTE: There are really no right or wrong answers on applying multiple contracts!
 
 ---
 

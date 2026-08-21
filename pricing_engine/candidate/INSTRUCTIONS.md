@@ -20,7 +20,7 @@ function getPrice(sku: string, customer: Customer): number
 
 Given a SKU and a customer, return the per-unit price the customer pays.
 
-The starter file (`starter.ts`) has:
+The starter file has:
 - A small SKU list-price table (LBM products).
 - A small customer table.
 - The function signature stub.
@@ -28,7 +28,6 @@ The starter file (`starter.ts`) has:
 
 ## Notes
 
-- Round however you think is right — but be ready to defend the choice.
 - You're free to add types, helpers, comments, tests, or rearrange anything in `starter.ts` except the embedded data.
 - TypeScript is the default but you can use any language you're stronger in.
 

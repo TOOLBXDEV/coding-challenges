@@ -53,8 +53,8 @@ def main
     { sku: 'A8-412X', customer: 'C-1002' }, # Maple Ridge (SILVER)
     { sku: 'A8-412X', customer: 'C-1003' }, # Walk-in (BRONZE)
     { sku: 'PLY-12F', customer: 'C-1001' }, # Bayside on plywood
-    { sku: '88A-99',  customer: 'C-1002' }  # Maple Ridge on OSB
-    # { sku: 'NLF-21',  customer: 'C-1001' }  # Bayside (GOLD) nails typo
+    { sku: '88A-99',  customer: 'C-1002' },  # Maple Ridge on OSB
+    # { sku: 'NLF-21',  customer: 'C-1001' },  # Bayside (GOLD) nails typo
   ]
 
   cases.each do |c|
